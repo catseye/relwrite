@@ -1,0 +1,11 @@
+[
+    [["<Sentence>"], ["<NP>", "<VP>"]],
+    [["<Sentence>"], ["<Sentence>", "then", "<VP>"]],
+    [["<NP>"],       ["<Det>", "<Noun>"]],
+    [["<VP>"],       ["<Verb>", "<NP>"]],
+    [["<Det>"],      ["the"]],
+    [["<Det>"],      ["a"]],
+    [["<Noun>"],     ["dog"]],
+    [["<Noun>"],     ["penguin"]],
+    [["<Verb>"],     ["sees"]]
+]
