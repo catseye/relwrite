@@ -17,10 +17,18 @@ def main(args):
         "--parse", action="store_true", default=False,
         help="Process rules from right to left"
     )
+
     argparser.add_argument(
         "--verbose", action="store_true", default=False,
         help="Display some vital statistics while processing"
     )
+    argparser.add_argument(
+        "--save-snapshots-every", metavar='COUNT', type=int, default=None,
+        help="If given, each time this many generations have passed, "
+             "save a copy of the working set of utterances to a JSON "
+             "file"
+    )
+
     argparser.add_argument(
         "--start", metavar='UTTERANCE', type=str, default=None,
         help="A single utterance to use as "
@@ -90,6 +98,7 @@ def main(args):
         max_derivations=options.max_derivations,
         max_matches=max_matches,
         verbose=options.verbose,
+        save_snapshots_every=options.save_snapshots_every,
         strategy=options.strategy,
         expand_until=options.expand_until,
         beam_width=options.beam_width,

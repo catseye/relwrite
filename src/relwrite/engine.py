@@ -38,7 +38,17 @@ def replace_at_index(utterance, pattern, replacement, index):
     return tuple(new_utterance)
 
 
-def derive(rules, working_utterances, max_derivations=None, max_matches=None, verbose=False, strategy=None, expand_until=None, beam_width=10):
+def derive(
+    rules,
+    working_utterances,
+    max_derivations=None,
+    max_matches=None,
+    verbose=False,
+    save_snapshots_every=None,
+    strategy=None,
+    expand_until=None,
+    beam_width=10
+):
     final_utterances = None
     collected_utterances = []
     num_derivations = 0
@@ -52,10 +62,13 @@ def derive(rules, working_utterances, max_derivations=None, max_matches=None, ve
 
     while working_utterances:
         iter += 1
-        # if verbose:  # TODO: actually this should be "if display_snapshots", or something
-        #     if iter % 100 == 0:
-        #         for i, wu in enumerate(working_utterances):
-        #             print(i, ' '.join(wu))
+        if save_snapshots_every and iter % save_snapshots_every == 0:
+            import json
+            snapshot_filename = 'snapshot-{}.json'.format(iter)
+            if verbose:
+                print('Saving snapshot to {}'.format(snapshot_filename))
+            with open(snapshot_filename, 'w') as f:
+                f.write(json.dumps(working_utterances, indent=4))
         length = len(working_utterances)
         lengths = [len(u) for u in working_utterances]
         min_length = min(lengths)
