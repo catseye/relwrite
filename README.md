@@ -46,7 +46,7 @@ Generate a really long string from a non-terminal in a grammar, without running 
 of memory and only taking a few hours of processor time:
 
 ```
-./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" --max-derivations=1 --strategy=expansion --expand-until=3000
+./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" --max-derivations=1 --strategy=expand --expand-until=3000
 ```
 
 Parse a really long string from a non-terminal in a grammar, without running out
@@ -54,7 +54,7 @@ of memory and only taking a few hours of processor time.  This assumes the strin
 to be parsed is in JSON format in the file `xyz.json`.
 
 ```
-./bin/relwrite eg/recursive-grammar.json --parse --start-set-file=xyz.json --max-derivations=1 --strategy=contraction
+./bin/relwrite eg/recursive-grammar.json --parse --start-set-file=xyz.json --max-derivations=1 --strategy=contract
 ```
 
 ### Detailed usage
@@ -70,5 +70,4 @@ It also uses the term "utterance" to mean "any string of terminals and non-termi
 ### TODO
 
 *   specify output filename
-*   try heuristic for contraction phase: highest proportion of terminals
 *   `--goal` to assert that a particular final utterance appears

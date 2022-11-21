@@ -33,31 +33,31 @@ def main(args):
     )
 
     argparser.add_argument(
-        "--max-rewrites-per-utterance", metavar='COUNT', type=int, default=None,
-        help="If given, limits the number of times a pattern can rewrite "
-             "any particular utterance during a single sweep "
-             "(default: no limit, unless beam search is applied, in which case 10)"
-    )
-    argparser.add_argument(
         "--max-derivations", metavar='COUNT', type=int, default=None,
         help="The maximum number of derivations to produce "
              "(default: no limit)"
     )
     argparser.add_argument(
-        "--expand-until", metavar='SIZE', type=int, default=None,
-        help="Implies the `expansion` strategy.  Specifies that the "
-             "resulting derivations must be at least this long"
+        "--max-rewrites-per-utterance", metavar='COUNT', type=int, default=None,
+        help="If given, limits the number of times a pattern can rewrite "
+             "any particular utterance during a single sweep "
+             "(default: no limit, unless beam search is applied, in which case 10)"
+    )
+
+    argparser.add_argument(
+        "--strategy", metavar='STRATEGY', type=str, default=None,
+        help="Will apply a particular strategy (`expand` or `contract`) "
+             "under beam search"
     )
     argparser.add_argument(
         "--beam-width", metavar='SIZE', type=int, default=10,
         help="When traversing with a strategy, specify the beam width "
              "for the beam search"
     )
-
     argparser.add_argument(
-        "--strategy", metavar='STRATEGY', type=str, default=None,
-        help="Will apply a particular strategy (`expansion` or `contraction`) "
-             "under beam search"
+        "--expand-until", metavar='SIZE', type=int, default=None,
+        help="When using the `expand` strategy, specifies that the "
+             "resulting derivations must be at least this long"
     )
 
     options = argparser.parse_args(args)
@@ -80,8 +80,6 @@ def main(args):
         print("No start set given, please supply --start or --start-set-file")
         working_utterances = []
 
-    if options.expand_until:
-        options.strategy = 'expansion'
     max_matches = options.max_rewrites_per_utterance
     if options.strategy:
         max_matches = max_matches or 10

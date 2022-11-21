@@ -42,15 +42,20 @@ def derive(rules, working_utterances, max_derivations=None, max_matches=None, ve
     final_utterances = None
     collected_utterances = []
     num_derivations = 0
+    iter = 0
 
-    def score_expansion(u):
-        return 0 - len(u)
-
-    def score_contraction(u):
-        return len(u)
+    scoring_functions = {
+        'expand': lambda u: 0 - len(u),
+        'contract': lambda u: len(u),
+        'minimize-nonterminals': lambda u: sum(map(lambda s: s.startswith('<'), u)),
+    }
 
     while working_utterances:
-
+        iter += 1
+        # if verbose:  # TODO: actually this should be "if display_snapshots", or something
+        #     if iter % 100 == 0:
+        #         for i, wu in enumerate(working_utterances):
+        #             print(i, ' '.join(wu))
         length = len(working_utterances)
         lengths = [len(u) for u in working_utterances]
         min_length = min(lengths)
@@ -58,17 +63,17 @@ def derive(rules, working_utterances, max_derivations=None, max_matches=None, ve
             print('{} working utterances, min length = {}'.format(
                 length, min_length
             ))
-        if strategy == 'expansion' and min_length >= (expand_until or 0):
+        if strategy == 'expand' and min_length >= (expand_until or 0):
             if verbose:
                 print('Reached {} threshold'.format(expand_until))
-            strategy = 'contraction'
+            # TODO: make it configurable, which strategy to switch to here?
+            strategy = 'minimize-nonterminals'
 
         working_utterances, final_utterances = generate(rules, working_utterances, max_matches=max_matches)
 
         # beam search: sort by score and trim before continuing
         if strategy:
-            scoring_function = score_contraction if strategy == 'contraction' else score_expansion
-            working_utterances = sorted(working_utterances, key=scoring_function)[:beam_width]
+            working_utterances = sorted(working_utterances, key=scoring_functions[strategy])[:beam_width]
 
         for utterance in final_utterances:
             print(' '.join(utterance))
