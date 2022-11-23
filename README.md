@@ -67,7 +67,26 @@ these are somewhat provisional and subject to change.
 `relwrite` uses the term "derivation" as a generic term meaning "a parse or a generated utterance".
 It also uses the term "utterance" to mean "any string of terminals and non-terminals".
 
-### TODO
+### TODO (immediate)
 
-*   specify output filename
+*   `--output-file` to specify output filename
 *   `--goal` to assert that a particular final utterance appears
+*   Turn `complete` into a strategy that must be explicitly selected.
+
+### TODO (aspirational)
+
+Analyze the input grammar and classify it in the Chomsky hierarchy.
+
+If the input grammar is context-free, use an algorithm such as Earley or CYK to
+efficiently parse or generate it.
+
+Allow strategies to be defined richly, perhaps in JSON files, and let
+them configure parameters like beam width, max rewrites per utterance, etc.
+
+For max rewrites per utterance, allow them to be taken from random
+points (or at least from a randomly-chosen start point) in the utterace.
+
+Support random search.  For `contract` strategy, it should be sufficient to
+identify the subset of the next states that is sufficiently contracting
+(this is not a "beam width" so much as a "pre-filter"),
+then select a single instance from it at random (beam width of 1).
