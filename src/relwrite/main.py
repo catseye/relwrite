@@ -123,15 +123,22 @@ def main(args):
         beam_width=options.beam_width,
     )
 
-    if options.goal:
-        raise NotImplementedError(str(result))
-
     if options.output_file:
         with open(options.output_file, 'w') as f:
             f.write(json.dumps(result, indent=4))
     else:
         sys.stdout.write(json.dumps(result, indent=4))
         sys.stdout.write("\n")
+
+    if options.goal:
+        if len(result) != 1:
+            raise ValueError("Derivation did not produce a single result")
+        result = result[0]
+        if len(result) != 1:
+            raise ValueError("Derivation result does not consist of single utterance")
+        result = result[0]
+        if options.goal != result:
+            raise ValueError("Derivation result does not match given goal")
 
 
 if __name__ == '__main__':
