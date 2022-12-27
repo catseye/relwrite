@@ -69,7 +69,6 @@ It also uses the term "utterance" to mean "any string of terminals and non-termi
 
 ### TODO (immediate)
 
-*   `--output-file` to specify output filename
 *   `--goal` to assert that a particular final utterance appears
 *   Turn `complete` into a strategy that must be explicitly selected.
 

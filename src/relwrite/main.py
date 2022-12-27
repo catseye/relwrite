@@ -9,24 +9,22 @@ def main(args):
 
     # NOTE: these options are provisional and will change
 
+    # Input/output specifying parameters
+
     argparser.add_argument(
-        'grammar_filename', metavar='FILENAME', type=str,
-        help='JSON file containing the grammar to use'
+        'grammar_filename', metavar='GRAMMARFILE', type=str,
+        help='name of JSON file containing the grammar to use'
     )
+    argparser.add_argument(
+        '--output-filename', '-o', metavar='FILENAME', type=str, default='out.json',
+        help='name of file to write JSON-formatted output to'
+    )
+
+    # Options that affect the process
+
     argparser.add_argument(
         "--parse", action="store_true", default=False,
         help="Process rules from right to left"
-    )
-
-    argparser.add_argument(
-        "--verbose", action="store_true", default=False,
-        help="Display some vital statistics while processing"
-    )
-    argparser.add_argument(
-        "--save-snapshots-every", metavar='COUNT', type=int, default=None,
-        help="If given, each time this many generations have passed, "
-             "save a copy of the working set of utterances to a JSON "
-             "file"
     )
 
     argparser.add_argument(
@@ -68,6 +66,19 @@ def main(args):
              "resulting derivations must be at least this long"
     )
 
+    # Debugging-type options
+
+    argparser.add_argument(
+        "--verbose", action="store_true", default=False,
+        help="Display some vital statistics while processing"
+    )
+    argparser.add_argument(
+        "--save-snapshots-every", metavar='COUNT', type=int, default=None,
+        help="If given, each time this many generations have passed, "
+             "save a copy of the working set of utterances to a JSON "
+             "file"
+    )
+
     options = argparser.parse_args(args)
 
     with open(options.grammar_filename, 'r') as f:
@@ -104,7 +115,7 @@ def main(args):
         beam_width=options.beam_width,
     )
 
-    with open('out.json', 'w') as f:
+    with open(options.output_filename, 'w') as f:
         f.write(json.dumps(result, indent=4))
 
 
