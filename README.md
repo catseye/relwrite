@@ -1,7 +1,7 @@
 `relwrite`
 ==========
 
-`relwrite` relates strings to string via a grammar in the Chomsky hierarchy.
+`relwrite` relates strings to strings via a grammar in the Chomsky hierarchy.
 
 What does "relate" mean in this context?
 
@@ -20,7 +20,7 @@ memory footprint in favour of generality, so in general usage, it works
 best on small inputs.
 
 There are, however, features intended to improve performance in the case of very
-long derivations.  Specifying a search strategy enables a **beam search** algorithm
+long derivations.  Search strategies can be used to enable a **beam search** algorithm
 which aggressively focuses on derivations with a desired propery, e.g. a particular
 minimum length.  This does sacrifice completeness however -- only a handful of all
 the possible results will be returned.
@@ -30,33 +30,47 @@ grammar files in the `eg/` directory of this repo.
 
 ### Example usage
 
-Generate a string from a non-terminal in a grammar:
+Generate a string from a starting non-terminal in a grammar:
 
 ```
-./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" --max-derivations=1
+./bin/relwrite complete eg/recursive-grammar.json \
+               --start "<Sentence>" --max-derivations=1
 ```
 
 Parse a string w.r.t. a grammar:
 
 ```
-./bin/relwrite eg/recursive-grammar.json --parse --start "a penguin sees a penguin then sees a dog"
+./bin/relwrite complete eg/recursive-grammar.json \
+               --parse --start "a penguin sees a penguin then sees a dog" \
+               --goal "<Sentence>"
 ```
 
-Generate a really long string from a non-terminal in a grammar, without running out
-of memory and only taking a few hours of processor time:
+Use the `complete` strategy to generate all possible strings from a
+starting non-terminal in a grammar.  NOTE that this can use unreasonable
+amounts of resources, with possibly adverse effects on your system.
 
 ```
-./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" \
-               --max-derivations=1 --strategy=expand --expand-until=3000 \
+./bin/relwrite complete eg/sample-grammar.json --start "<Sentence>"
+```
+
+Use the `expand` strategy to generate a really long string from a non-terminal
+in a grammar, without running out of memory and only taking a few hours of
+processor time:
+
+```
+./bin/relwrite expand eg/recursive-grammar.json \
+               --start "<Sentence>" --max-derivations=1 --expand-until=3000 \
                --output-file=out.json
 ```
 
-Parse a really long string from a non-terminal in a grammar, without running out
-of memory and only taking a few hours of processor time.  This assumes the string
-to be parsed is in JSON format in the file `xyz.json`.
+Use the `contract` strategy to parse a really long string from a non-terminal
+in a grammar, without running out of memory and only taking a few hours of
+processor time.  This assumes the string to be parsed is in JSON format in
+the file `out.json` -- the generation example above would produce this.
 
 ```
-./bin/relwrite eg/recursive-grammar.json --parse --start-set-file=xyz.json --max-derivations=1 --strategy=contract
+./bin/relwrite contract eg/recursive-grammar.json \
+               --parse --start-set-file=out.json
 ```
 
 ### Detailed usage
@@ -69,11 +83,7 @@ these are somewhat provisional and subject to change.
 `relwrite` uses the term "derivation" as a generic term meaning "a parse or a generated utterance".
 It also uses the term "utterance" to mean "any string of terminals and non-terminals".
 
-### TODO (immediate)
-
-*   Turn `complete` into a strategy that must be explicitly selected.
-
-### TODO (aspirational)
+### TODO
 
 Analyze the input grammar and classify it in the Chomsky hierarchy.
 

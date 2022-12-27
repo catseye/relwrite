@@ -8,7 +8,19 @@ from .engine import derive
 def main(args):
     argparser = ArgumentParser()
 
-    # NOTE: these options are provisional and will change
+    # NOTE: these options are somewhat provisional and may change
+
+    # Strategy
+
+    argparser.add_argument(
+        "strategy", metavar='STRATEGY', type=str,
+        help="apply this strategy to the search; must be one of "
+             "`complete`, `expand`, or `contract`.  NOTE: while "
+             "`complete` will find all parses, it will also use "
+             "the most resources, with possibly adverse effects "
+             "on your system; the other strategies use "
+             "beam search to avoid this"
+    )
 
     # Input/output specifying parameters
 
@@ -26,43 +38,38 @@ def main(args):
 
     argparser.add_argument(
         "--parse", action="store_true", default=False,
-        help="Process rules from right to left"
+        help="process rules from right to left"
     )
 
     argparser.add_argument(
         "--start", metavar='UTTERANCE', type=str, default=None,
-        help="A single utterance to use as "
+        help="a single utterance to use as "
              "the starting point of the derivation"
     )
     argparser.add_argument(
         "--start-set-file", metavar='FILENAME', type=str, default=None,
-        help="Use the set of utterances in this JSON file as "
+        help="use the set of utterances in this JSON file as "
              "the starting point of the derivation"
     )
     argparser.add_argument(
         "--goal", metavar='UTTERANCE', type=str, default=None,
-        help="A single utterance; if given, the processor expects it "
+        help="a single utterance; if given, the processor expects it "
              "to be the final result of the derivation; if it is not, "
              "exits with a non-zero error code"
     )
 
     argparser.add_argument(
         "--max-derivations", metavar='COUNT', type=int, default=None,
-        help="The maximum number of derivations to produce "
+        help="the maximum number of derivations to produce "
              "(default: no limit)"
     )
     argparser.add_argument(
         "--max-rewrites-per-utterance", metavar='COUNT', type=int, default=None,
-        help="If given, limits the number of times a pattern can rewrite "
+        help="if given, limits the number of times a pattern can rewrite "
              "any particular utterance during a single sweep "
              "(default: no limit, unless beam search is applied, in which case 10)"
     )
 
-    argparser.add_argument(
-        "--strategy", metavar='STRATEGY', type=str, default=None,
-        help="Will apply a particular strategy (`expand` or `contract`) "
-             "under beam search"
-    )
     argparser.add_argument(
         "--beam-width", metavar='SIZE', type=int, default=10,
         help="When traversing with a strategy, specify the beam width "
@@ -108,17 +115,17 @@ def main(args):
         working_utterances = []
 
     max_matches = options.max_rewrites_per_utterance
-    if options.strategy:
+    if options.strategy != 'complete':
         max_matches = max_matches or 10
 
     result = derive(
         rules,
         working_utterances,
+        options.strategy,
         max_derivations=options.max_derivations,
         max_matches=max_matches,
         verbose=options.verbose,
         save_snapshots_every=options.save_snapshots_every,
-        strategy=options.strategy,
         expand_until=options.expand_until,
         beam_width=options.beam_width,
     )

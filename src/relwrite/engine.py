@@ -41,11 +41,11 @@ def replace_at_index(utterance, pattern, replacement, index):
 def derive(
     rules,
     working_utterances,
+    strategy,
     max_derivations=None,
     max_matches=None,
     verbose=False,
     save_snapshots_every=None,
-    strategy=None,
     expand_until=None,
     beam_width=10
 ):
@@ -55,6 +55,7 @@ def derive(
     iter = 0
 
     scoring_functions = {
+        'complete': None,
         'expand': lambda u: 0 - len(u),
         'contract': lambda u: len(u),
         'minimize-nonterminals': lambda u: sum(map(lambda s: s.startswith('<'), u)),
@@ -85,8 +86,9 @@ def derive(
         working_utterances, final_utterances = generate(rules, working_utterances, max_matches=max_matches)
 
         # beam search: sort by score and trim before continuing
-        if strategy:
-            working_utterances = sorted(working_utterances, key=scoring_functions[strategy])[:beam_width]
+        scoring_function = scoring_functions[strategy]
+        if scoring_function:
+            working_utterances = sorted(working_utterances, key=scoring_function)[:beam_width]
 
         for utterance in final_utterances:
             collected_utterances.append(utterance)
