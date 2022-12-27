@@ -89,7 +89,6 @@ def derive(
             working_utterances = sorted(working_utterances, key=scoring_functions[strategy])[:beam_width]
 
         for utterance in final_utterances:
-            print(' '.join(utterance))
             collected_utterances.append(utterance)
             num_derivations += 1
             if max_derivations and num_derivations >= max_derivations:

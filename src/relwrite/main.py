@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import json
+import sys
 
 from .engine import derive
 
@@ -16,8 +17,9 @@ def main(args):
         help='name of JSON file containing the grammar to use'
     )
     argparser.add_argument(
-        '--output-filename', '-o', metavar='FILENAME', type=str, default='out.json',
-        help='name of file to write JSON-formatted output to'
+        '--output-file', '-o', metavar='FILENAME', type=str, default=None,
+        help="name of file to write JSON-formatted output to; "
+             "if not given, it will be written to standard output"
     )
 
     # Options that affect the process
@@ -36,6 +38,12 @@ def main(args):
         "--start-set-file", metavar='FILENAME', type=str, default=None,
         help="Use the set of utterances in this JSON file as "
              "the starting point of the derivation"
+    )
+    argparser.add_argument(
+        "--goal", metavar='UTTERANCE', type=str, default=None,
+        help="A single utterance; if given, the processor expects it "
+             "to be the final result of the derivation; if it is not, "
+             "exits with a non-zero error code"
     )
 
     argparser.add_argument(
@@ -115,8 +123,15 @@ def main(args):
         beam_width=options.beam_width,
     )
 
-    with open(options.output_filename, 'w') as f:
-        f.write(json.dumps(result, indent=4))
+    if options.goal:
+        raise NotImplementedError(str(result))
+
+    if options.output_file:
+        with open(options.output_file, 'w') as f:
+            f.write(json.dumps(result, indent=4))
+    else:
+        sys.stdout.write(json.dumps(result, indent=4))
+        sys.stdout.write("\n")
 
 
 if __name__ == '__main__':

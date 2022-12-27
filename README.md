@@ -46,7 +46,9 @@ Generate a really long string from a non-terminal in a grammar, without running 
 of memory and only taking a few hours of processor time:
 
 ```
-./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" --max-derivations=1 --strategy=expand --expand-until=3000
+./bin/relwrite eg/recursive-grammar.json --start "<Sentence>" \
+               --max-derivations=1 --strategy=expand --expand-until=3000 \
+               --output-file=out.json
 ```
 
 Parse a really long string from a non-terminal in a grammar, without running out
@@ -76,8 +78,8 @@ It also uses the term "utterance" to mean "any string of terminals and non-termi
 
 Analyze the input grammar and classify it in the Chomsky hierarchy.
 
-If the input grammar is context-free, use an algorithm such as Earley or CYK to
-efficiently parse or generate it.
+If the input grammar is context-free, use a chart parsing algorithm to
+efficiently parse it, or an incremental algorithm to generate from it.
 
 Allow strategies to be defined richly, perhaps in JSON files, and let
 them configure parameters like beam width, max rewrites per utterance, etc.
